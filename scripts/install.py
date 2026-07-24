@@ -57,8 +57,9 @@ def fusion_base_dir() -> str:
         )
     if sys.platform.startswith("win"):
         appdata = os.environ.get("APPDATA", os.path.join(home, "AppData", "Roaming"))
+        # On Windows the per-user scripts live under a "Support" subfolder.
         return os.path.join(
-            appdata, "Blackmagic Design", "DaVinci Resolve", "Fusion",
+            appdata, "Blackmagic Design", "DaVinci Resolve", "Support", "Fusion",
         )
     # Linux
     return os.path.join(home, ".local", "share", "DaVinciResolve", "Fusion")
