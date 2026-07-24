@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urdu-subtitles-resolve"
+version = "1.0.0"
+description = "Advanced automatic Urdu transcription and subtitles for DaVinci Resolve"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "LogoOrbit" }]
+keywords = ["urdu", "subtitles", "whisper", "davinci-resolve", "transcription", "rtl"]
+
+dependencies = [
+    "faster-whisper>=1.0.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai-whisper>=20231117"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+urdu-subtitles = "urdu_subtitles.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["urdu_subtitles*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
