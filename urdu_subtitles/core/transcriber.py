@@ -52,6 +52,27 @@ def _pick_device(requested: str) -> str:
     return "cpu"
 
 
+def _ffmpeg_exe() -> str:
+    """Locate an ffmpeg binary.
+
+    Prefers a system ffmpeg on PATH; otherwise falls back to the binary that
+    ships with the ``imageio-ffmpeg`` pip package, so users never have to
+    install ffmpeg separately.
+    """
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    try:
+        import imageio_ffmpeg  # type: ignore
+
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception as exc:
+        raise RuntimeError(
+            "No ffmpeg available. Install ffmpeg, or `pip install "
+            "imageio-ffmpeg` (bundled by the plugin installer)."
+        ) from exc
+
+
 def extract_audio(
     input_path: str,
     *,
@@ -65,15 +86,12 @@ def extract_audio(
     """
     if not os.path.isfile(input_path):
         raise FileNotFoundError(input_path)
-    if shutil.which("ffmpeg") is None:
-        raise RuntimeError(
-            "ffmpeg not found on PATH. Install ffmpeg to extract audio."
-        )
+    ffmpeg = _ffmpeg_exe()
     if out_path is None:
         fd, out_path = tempfile.mkstemp(suffix=".wav", prefix="urdu_asr_")
         os.close(fd)
     cmd = [
-        "ffmpeg", "-y", "-i", input_path,
+        ffmpeg, "-y", "-i", input_path,
         "-vn", "-ac", "1", "-ar", str(sample_rate),
         "-acodec", "pcm_s16le", out_path,
     ]

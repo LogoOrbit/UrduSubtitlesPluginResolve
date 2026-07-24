@@ -1,0 +1,45 @@
+name: Build installer
+
+# Builds the self-contained Windows installer .exe and attaches it to a
+# GitHub Release. Runs when a version tag (v*) is pushed, or on demand from
+# the Actions tab (Run workflow).
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyInstaller
+        run: python -m pip install --upgrade pip pyinstaller
+
+      - name: Build UrduAutoSubtitles-Setup.exe
+        run: >
+          pyinstaller --onefile --noconsole
+          --name "UrduAutoSubtitles-Setup"
+          installer/gui_installer.py
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UrduAutoSubtitles-Setup
+          path: dist/UrduAutoSubtitles-Setup.exe
+
+      - name: Attach to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/UrduAutoSubtitles-Setup.exe
+          generate_release_notes: true

@@ -178,7 +178,8 @@ def install_dependencies(py: str | None) -> bool:
             check=False, capture_output=True,
         )
         proc = subprocess.run(
-            [py, "-m", "pip", "install", "faster-whisper>=1.0.0"],
+            [py, "-m", "pip", "install",
+             "faster-whisper>=1.0.0", "imageio-ffmpeg>=0.4.9"],
             capture_output=True, text=True,
         )
         if proc.returncode != 0:
@@ -225,13 +226,9 @@ def main() -> int:
 
     if not ok:
         py = find_resolve_python() or "python3"
-        print("\nInstall the ASR dependency into Resolve's Python manually:")
-        print(f'  "{py}" -m pip install faster-whisper')
-    if not ffmpeg_present():
-        print("\nAlso install ffmpeg (required for audio extraction):")
-        print("  macOS:  brew install ffmpeg")
-        print("  Ubuntu: sudo apt install ffmpeg")
-        print("  Windows: choco install ffmpeg   (or add ffmpeg.exe to PATH)")
+        print("\nInstall the dependencies into Resolve's Python manually:")
+        print(f'  "{py}" -m pip install faster-whisper imageio-ffmpeg')
+    # ffmpeg is bundled via imageio-ffmpeg, so no separate install is needed.
     print("\nTip: enable Preferences > System > General >")
     print("     'External scripting using' = Local  (if prompted).")
     return 0

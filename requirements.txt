@@ -1,6 +1,9 @@
 # Core ASR engine (default). CTranslate2-based, fast and low-memory.
 faster-whisper>=1.0.0
 
+# Bundles an ffmpeg binary so users don't have to install ffmpeg separately.
+imageio-ffmpeg>=0.4.9
+
 # Reference engine (optional alternative; enable with --engine openai-whisper)
 # openai-whisper>=20231117
 
