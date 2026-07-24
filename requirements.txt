@@ -1,0 +1,14 @@
+# Core ASR engine (default). CTranslate2-based, fast and low-memory.
+faster-whisper>=1.0.0
+
+# Reference engine (optional alternative; enable with --engine openai-whisper)
+# openai-whisper>=20231117
+
+# faster-whisper pulls in ctranslate2 + tokenizers; torch is only needed for
+# the openai-whisper backend or CUDA device detection.
+# torch>=2.0
+
+# ffmpeg is required on PATH for audio extraction (system package, not pip):
+#   macOS:   brew install ffmpeg
+#   Ubuntu:  sudo apt install ffmpeg
+#   Windows: choco install ffmpeg
