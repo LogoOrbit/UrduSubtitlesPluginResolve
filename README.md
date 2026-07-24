@@ -40,35 +40,61 @@ urdu_subtitles/
     ├── resolve_api.py   # DaVinci Resolve scripting wrapper
     └── panel.py         # in‑Resolve UI panel (Fusion UIManager)
 scripts/
-├── urdu_panel.py        # Resolve Scripts entry point
-└── install.py           # copies the panel into Resolve's Scripts folder
+└── install.py           # self-bootstrapping installer (copies plugin,
+                         #   installs deps into Resolve's Python, adds menu item)
+install/
+├── install-macos.command  # double-click installers that download & run
+├── install-windows.bat    #   scripts/install.py from GitHub
+└── install-linux.sh
 ```
 
 The `core` package has **no hard ML dependency at import time** — the Whisper
 backend is loaded lazily, so formatting logic and tests run anywhere.
 
-## Install
+## Install (one step)
 
-### 1. Dependencies
+Supports **DaVinci Resolve 20 and later** (Free & Studio) on macOS, Windows and
+Linux. The installer copies the plugin into Resolve's Scripts folder, installs
+the Whisper dependency into Resolve's own Python, and adds the menu item — no
+manual file copying.
+
+### Easiest — download & double‑click
+
+| OS | Download this file, then double‑click it |
+|----|------------------------------------------|
+| **macOS** | [`install/install-macos.command`](https://github.com/LogoOrbit/UrduSubtitlesPluginResolve/raw/claude/urdu-auto-transcription-davinci-kwmp6a/install/install-macos.command) |
+| **Windows** | [`install/install-windows.bat`](https://github.com/LogoOrbit/UrduSubtitlesPluginResolve/raw/claude/urdu-auto-transcription-davinci-kwmp6a/install/install-windows.bat) |
+| **Linux** | [`install/install-linux.sh`](https://github.com/LogoOrbit/UrduSubtitlesPluginResolve/raw/claude/urdu-auto-transcription-davinci-kwmp6a/install/install-linux.sh) |
+
+> On macOS, if double‑click is blocked: right‑click → **Open**, or run
+> `chmod +x install-macos.command` first.
+
+### One‑liner (macOS / Linux)
 
 ```bash
-pip install -r requirements.txt      # faster-whisper
-# ffmpeg must be on PATH:
-#   macOS:   brew install ffmpeg
-#   Ubuntu:  sudo apt install ffmpeg
+curl -fsSL https://raw.githubusercontent.com/LogoOrbit/UrduSubtitlesPluginResolve/claude/urdu-auto-transcription-davinci-kwmp6a/scripts/install.py | python3 -
 ```
 
-> DaVinci Resolve uses its **own** Python. To run the in‑Resolve panel, install
-> the dependencies into Resolve's interpreter, or set `PYTHONPATH` to a venv
-> that has them. See `docs/USAGE.md`.
+### One‑liner (Windows PowerShell)
 
-### 2. Register the Resolve panel
+```powershell
+python -c "import urllib.request as u;exec(u.urlopen('https://raw.githubusercontent.com/LogoOrbit/UrduSubtitlesPluginResolve/claude/urdu-auto-transcription-davinci-kwmp6a/scripts/install.py').read())"
+```
+
+### From a clone
 
 ```bash
-python scripts/install.py
+git clone https://github.com/LogoOrbit/UrduSubtitlesPluginResolve
+python UrduSubtitlesPluginResolve/scripts/install.py
 ```
 
-Then in Resolve: **Workspace → Scripts → Utility → “Urdu Auto Subtitles”**.
+After installing, open Resolve and run
+**Workspace → Scripts → Utility → “Urdu Auto Subtitles”**.
+
+> **ffmpeg** must also be on PATH (`brew install ffmpeg` / `sudo apt install
+> ffmpeg` / `choco install ffmpeg`). The installer reminds you if it's missing.
+> If it can't find Resolve's Python, it prints the exact `pip install
+> faster-whisper` command to run. Details in [`docs/USAGE.md`](docs/USAGE.md).
 
 ## Usage
 
