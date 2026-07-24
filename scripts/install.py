@@ -106,7 +106,13 @@ def find_resolve_python() -> str | None:
 # Obtaining the package source (local clone or GitHub download).              #
 # --------------------------------------------------------------------------- #
 def local_repo_root() -> str | None:
-    here = os.path.dirname(os.path.abspath(__file__))
+    # __file__ is undefined when this installer is run via exec() of a
+    # downloaded string (the curl/PowerShell one-liner); in that case there is
+    # no local clone and we fall back to downloading from GitHub.
+    script = globals().get("__file__")
+    if not script:
+        return None
+    here = os.path.dirname(os.path.abspath(script))
     root = os.path.dirname(here)
     if os.path.isdir(os.path.join(root, PACKAGE_NAME)):
         return root
